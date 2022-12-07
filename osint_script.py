@@ -6,34 +6,43 @@ import json
 import requests
 import yaml
 import time
+from datetime import date
+
+def create_resultdirectories(target):
+    for domain in target:
+        if os.path.exists(f"{domain}"):
+            continue
+        os.system(f"mkdir {domain}")
 
 
-#building the argument parser for the script
+#uilding the argument parser for the script
 def build_argumentparser():
-    global parser
     parser = argparse.ArgumentParser()
-    parser.parse_args()
+    parser.add_argument('-f', '--file', help = 'list of domain name to search',required='true' )
+    parser.add_argument('-c','--config_file',help = 'The .yaml configuration file used by the script',default='config.yaml')
+    args = parser.parse_args()
+    return args
 
 
 #opening the .txt file containing the targets and onverting them into a python list
 def get_targetlist(target_file):
-    global target_list
     target_list = []
     with open(target_file) as file:
         for line in file:
             target_list.append(line.strip())
+    return target_list
 
 #reading the yaml config file
 def get_config(config_file):
-    global configuration
     with open(config_file,'r') as file:
         configuration = yaml.safe_load(file)
+    return configuration
 
 
 
 def run_theHarvester(target):
     for domain in target:
-        os.system(f"theHarvester -d {domain} -b hackertarget")
+        os.system(f"theHarvester -d {domain} -b hackertarget > {domain}/{today}-theHarvester")
 
 def run_shodan(target):
     for domain in target:
@@ -41,7 +50,7 @@ def run_shodan(target):
 
 def run_dnscan(target):
     for domain in target:
-        os.system(f"./dnscan.py -d {domain}")
+        os.system(f"./dnscan/dnscan.py -d {domain} > {domain}/{today}-dnscan")
 
 def run_urlscan(target, api_key):
     global request_uuid_list
@@ -55,38 +64,43 @@ def run_urlscan(target, api_key):
     time.sleep(30)
 
     for uuid in request_uuid_list:
-        os.system(f"curl https://urlscan.io/api/v1/result/{uuid}")
+        os.system(f"curl https://urlscan.io/api/v1/result/{uuid} > {domain}/{today}-urlscan")
 
 
-build_argumentparser()
-
-get_config("config.yaml")
-
-get_targetlist("domain.txt")
-
-urlscan_api_key = configuration['tools']['urlscan.io']['api_key']
+arguments = build_argumentparser()
 
 
-if configuration['tools']['theHarvester'] == "enabled":
+
+
+configuration = get_config(arguments.config_file)
+
+target_list = get_targetlist(arguments.file)
+
+urlscan_api_key = configuration['urlscan.io']['api_key']
+
+today = date.today()
+
+create_resultdirectories(target_list)
+
+if configuration['theHarvester']['enabled']:
     run_theHarvester(target_list)
 else:
 	print("theHarvester is disabled in config file")
 
 
-
-if configuration['tools']['dnscan'] == "enabled":
+if configuration['dnscan']['enabled']:
     run_dnscan(target_list)
 else:
 	print("dnscan is disabled in config file")
 
 
-if configuration['tools']['shodan'] == "enabled":
+if configuration['shodan']['enabled']:
     run_shodan(target_list)
 else:
 	print("shodan is disabled in config file")
 
 
-if configuration['tools']['urlscan.io'] == "enabled":
+if configuration['urlscan.io']['enabled']:
     run_urlscan(target_list,urlscan_api_key)
 else:
 	print("urlscan is disabled in config file")
