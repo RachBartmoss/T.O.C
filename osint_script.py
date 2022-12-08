@@ -10,16 +10,17 @@ from datetime import date
 
 def create_resultdirectories(target):
     for domain in target:
-        if os.path.exists(f"{domain}"):
+        if os.path.exists(f"results/{domain}"):
             continue
-        os.system(f"mkdir {domain}")
+        os.system(f"mkdir -p results/{domain}")
 
 
 #uilding the argument parser for the script
 def build_argumentparser():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--verbose', help='increase output verbosity',action='store_true')
     parser.add_argument('-f', '--file', help = 'list of domain name to search',required='true' )
-    parser.add_argument('-c','--config_file',help = 'The .yaml configuration file used by the script',default='config.yaml')
+    parser.add_argument('-s', '--source',help = 'search source for theHarvester')
     args = parser.parse_args()
     return args
 
@@ -39,10 +40,12 @@ def get_config(config_file):
     return configuration
 
 
-
+#
 def run_theHarvester(target):
     for domain in target:
-        os.system(f"theHarvester -d {domain} -b hackertarget > {domain}/{today}-theHarvester")
+        if arguments.verbose:
+            print(f"running a theHarvester scan on the {domain} domain using {arguments.source} as a source")
+        os.system(f"theHarvester -d {domain} -b {arguments.source} > results/{domain}/{today}-theHarvester")
 
 def run_shodan(target):
     for domain in target:
@@ -50,21 +53,21 @@ def run_shodan(target):
 
 def run_dnscan(target):
     for domain in target:
-        os.system(f"./dnscan/dnscan.py -d {domain} > {domain}/{today}-dnscan")
+        os.system(f"./dnscan/dnscan.py -d {domain} > results/{domain}/{today}-dnscan")
 
 def run_urlscan(target, api_key):
-    global request_uuid_list
+    request_list = []
     request_uuid_list = []
     for domain in target:
         headers = {'API-Key':api_key,'Content-Type':'application/json'}
         data = {"url": f"https://{domain}", "visibility": "public"}
         response = requests.post('https://urlscan.io/api/v1/scan/',headers=headers, data=json.dumps(data))
-        request_uuid_list.append(response.json()['uuid'])
-
+        #request_uuid_list.append(response.json()['uuid'])
+        request_list.append(f"curl https://urlscan.io/api/v1/result/{response.json()['uuid']} > results/{domain}/{today}-urlscan")
     time.sleep(30)
 
-    for uuid in request_uuid_list:
-        os.system(f"curl https://urlscan.io/api/v1/result/{uuid} > {domain}/{today}-urlscan")
+    for request in request_list:
+        os.system(f"{request}")
 
 
 arguments = build_argumentparser()
@@ -72,7 +75,7 @@ arguments = build_argumentparser()
 
 
 
-configuration = get_config(arguments.config_file)
+configuration = get_config("config.yaml")
 
 target_list = get_targetlist(arguments.file)
 
