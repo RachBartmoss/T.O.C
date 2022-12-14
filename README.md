@@ -12,4 +12,4 @@ The functions pertinent to the scan are as follows:
 
 |Function's name|Role|
 |---------------|----|
-|run_theHarvester()|Initiate a theHarvester scan on each of the domain using the --source argument as the source|
+|`run_theHarvester()`|Initiate a theHarvester scan on each of the domain using the --source argument as the source|
