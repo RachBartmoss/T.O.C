@@ -32,3 +32,22 @@ The case of urlscan.io is a little bit different, it makes a request on the urls
 |---------------|----|
 |`probe_urlscan`|Sends a request to urlscan.io to scan each of the domain, recuperating a list of request IDs (called uuid)|
 |`fetch_urlscan_result`|Fetches the result from urlscan.io using the request ID (uuid) we get from the first function|
+
+
+#### Arguments
+
+T.O.C accepts a range of arguments like a --verbose option to display what happens in beautiful progress bars:
+
+```
+./osint.py -h
+usage: osint.py [-h] [-v] -f FILE [-s SOURCE]
+
+options:
+  -h, --help            show this help message and exit
+  -v, --verbose         increase output verbosity
+  -f FILE, --file FILE  list of domain name to search
+  -s SOURCE, --source SOURCE
+                        search source for theHarvester
+```                        
+                        
+                                                                                                                                                                      
