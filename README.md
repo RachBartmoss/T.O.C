@@ -1,14 +1,5 @@
-|---|
-|
 
-                            88888888888   .d88888b.       .d8888b.  
-                                888      d88P" "Y88b     d88P  Y88b 
-                                888      888     888     888    888 
-                                888      888     888     888        
-                                888      888     888     888        
-                                888      888     888     888    888 
-                                888  d8b Y88b. .d88P d8b Y88b  d88P 
-                                888  Y8P  "Y88888P"  Y8P  "Y8888P"  
+# T.O.C
                             
                                                                                                     
                                                                                                     
@@ -29,17 +20,16 @@
                      ~BBBY7?.     5BBB#Y?J..?G#BBGYJ7^ .?G#BBBBGY5!775BBB#J                         
                      J#BB7J7      Y#BBBB!J~J#BBB5J?~. ^P#BBBBPJJ!~.7?5BBBBP                         
                      ?#BBP!J^     Y#BBBBJ?!?#BBP7?:  !BBBBBB?J!:   ?7PBBBB5                         
-                     :GBBBJJ?^    5BBBBB?J7!#B5?J.  ^BBBBBBY?~    ^J?BBBB#?                         |
-|----|                     
+                     :GBBBJJ?^    5BBBBB?J7!#B5?J.  ^BBBBBBY?~    ^J?BBBB#?                                            
                      
 
 ## What is this?
 
-Osint_Project is an automated tool for open source investigation. It uses 4 other tools/sources and fuses them in one command-line script. It runs the 4 tools consecutively on a list of domain and outputs the result to a separate file for each domain and tool.
+T.O.C is an automated tool for open source investigation. It uses 4 other tools/sources and fuses them in one command-line script. It runs the 4 tools consecutively on a list of domain and outputs the result to a separate file for each domain and tool.
 
 ## What does it do and how does it do it ?
 
-Osint_Project takes a texte file as input and iniate 4 scans from 4 different tools on each of the domain listed.
+T.O.C takes a texte file as input and iniate 4 scans from 4 different tools on each of the domain listed.
 
 The functions pertinent to the scan are as follows:
 
