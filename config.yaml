@@ -1,7 +1,7 @@
 # configuration file for projet_osint
 
 theHarvester :
-  enabled :   # True or False to enable or Disable the tool
+  enabled : True   # True or False to enable or Disable the tool
 dnscan :
   enabled :
 shodan :
