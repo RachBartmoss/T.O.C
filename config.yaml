@@ -10,3 +10,5 @@ shodan :
 urlscan.io :
   enabled :
   api_key :
+dorkscan :
+  enabled : 
