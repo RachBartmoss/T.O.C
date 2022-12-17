@@ -9,46 +9,18 @@ import time
 from datetime import date
 from json2html import *
 from tqdm import tqdm
+import yagooglesearch
 
-
-
-header= '''\033[0;32m
-
-
-                            88888888888   .d88888b.       .d8888b.  
-                                888      d88P" "Y88b     d88P  Y88b 
-                                888      888     888     888    888 
-                                888      888     888     888        
-                                888      888     888     888        
-                                888      888     888     888    888 
-                                888  d8b Y88b. .d88P d8b Y88b  d88P 
-                                888  Y8P  "Y88888P"  Y8P  "Y8888P"  
-                            
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                        .:::.                                        :~7JJJ?!:                      
-                      ^?JJJYYJ?^                               !~^^7Y5YJ77?JPGY:                    
-          :!7??!^    :57::^:!JYP5:               .:!~!7^^:     .!??7^.     .!JGG^:~^^:.             
-        ^YP5J77?5Y:   !?!!:  :7?PG^      :^:   .~J5GGGGG5J!^             .:~^7?BG!PGGPY7:           
-       ~B5?::.  ^PY     .     :J?B5    .Y?^:. :?5BY~::^?BB5?!          ^~??PJ!?P#Y^^~7PGJ^          
-       5G?~ :!~!?Y^           .J7GG.   ^G?:.:!YGP~      ~BB5?~       ^!JYGB#Y!?PBG.    5P7          
-       ?#Y?^..::.     .. :... :??BY     ~Y555P5!.       .GBG??      ~?JGBBY^.??GBG.    ~G7          
-        JBP5?7!!!!!777????????!?77~       .::.          JBBG?7     ^J?BBB? .!?5B#5     :G?          
-         ^?PGGBGBGGBGBGG#GBBGBPY57?7^.                ^5#BBJJ:     ?7PBBG:!7Y5##G^      !J!^.       
-            :^~!!77777777?YY5PB##GGJ?J^             :JB#BPJ?:      ?7GBBP!55B##P^         ..        
-                        :YBG!77?G#BBG7J7          ^YB#BGYJ!.   :~?!?7GBBB!G#BP7.                    
-                       7B#P?J!. :PBBBG??7      .!5B#BGJJ!:  ^?5GB#J7?PBBBY7J~.                      
-                      ?#BG?J!    ^BBBBG?J~   :?G##BGJJ!^ .7PB#BBB#J7?5BBBB~                         
-                     ~BBBY7?.     5BBB#Y?J..?G#BBGYJ7^ .?G#BBBBGY5!775BBB#J                         
-                     J#BB7J7      Y#BBBB!J~J#BBB5J?~. ^P#BBBBPJJ!~.7?5BBBBP                         
-                     ?#BBP!J^     Y#BBBBJ?!?#BBP7?:  !BBBBBB?J!:   ?7PBBBB5                         
-                     :GBBBJJ?^    5BBBBB?J7!#B5?J.  ^BBBBBBY?~    ^J?BBBB#?    
+ 
                      
-\033[00m'''                     
 
 
-
+def print_banner(banner_file):
+    with open(banner_file,'r') as file:
+        for line in file:
+            print(f"\033[0;32m{line}\033[00m",end="")
+            time.sleep(0.05)
+    
 
 
 
@@ -66,6 +38,7 @@ def build_argumentparser():
     parser.add_argument('-v', '--verbose', help='increase output verbosity',action='store_true')
     parser.add_argument('-f', '--file', help = 'list of domain name to search',required='true' )
     parser.add_argument('-s', '--source',help = 'search source for theHarvester')
+    parser.add_argument('-d', '--dorks',help = 'list of dorks to use for the dorkscan tool')
     args = parser.parse_args()
     return args
 
@@ -77,6 +50,13 @@ def get_targetlist(target_file):
         for line in file:
             target_list.append(line.strip())
     return target_list
+
+def get_dorkslist(dorks_file):
+    dorks_list = []
+    with open(dorks_file,'r') as file:
+        for line in file:
+            dorks_list.append(line.strip())
+    return dorks_list
 
 #reading the yaml config file
 def get_config(config_file):
@@ -164,6 +144,42 @@ def fetch_urlscan_result(domain_list, uuid_list):
         uuid_count+=1    
               
 
+def run_dorkscan(target,dorks):
+    
+    if arguments.verbose:
+        target = tqdm(target)
+    
+    for domain in target:
+        
+        if arguments.verbose:
+            target.set_description(f"Runnning \033[01m\033[91m Dorkscan \033[00m on \033[01m\033[91m{domain}\033[00m")
+
+        result_list = []
+        
+        for dork in dorks:
+            query = f"inurl:{domain} {dork}"
+            result_list.append(f"-inurl:{query} :\n")
+            client = yagooglesearch.SearchClient(query,verbosity = 0, max_search_result_urls_to_return=10, yagooglesearch_manages_http_429s=False)
+            client.assign_random_user_agent()
+            urls = client.search()
+            
+            if "HTTP_429_DETECTED" in urls:
+                print("IP address detected by google, wait for 1H before making new requests with dorkscan\n")
+                return
+
+            for url in urls:
+                result_list.append(url)
+            result_list.append("\n")
+            
+            time.sleep(10)
+            
+        with open(f"results/{domain}/{today}-dorkscan","w") as file:
+            for line in result_list:
+                file.write(f"{line}\n")
+        
+        if arguments.verbose:
+            target.update()
+
 
 arguments = build_argumentparser()
 
@@ -176,7 +192,9 @@ today = date.today()
 
 create_resultdirectories(target_list)
 
-print(header)
+#print(header)
+print_banner("banner.txt")
+
 
 if configuration['theHarvester']['enabled']:
     run_theHarvester(target_list)
@@ -212,3 +230,11 @@ if configuration['urlscan.io']['enabled']:
     fetch_urlscan_result(target_list,uuid_list)
 else:
 	print("urlscan is disabled in config file\n")
+
+print("\n")
+    
+if configuration['dorkscan']['enabled']:
+    dorks_list = get_dorkslist(arguments.dorks)
+    run_dorkscan(target_list, dorks_list)
+else:
+	print("dor is disabled in config file\n")
