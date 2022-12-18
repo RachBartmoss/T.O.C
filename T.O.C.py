@@ -10,6 +10,8 @@ from datetime import date
 from json2html import *
 from tqdm import tqdm
 import yagooglesearch
+import subprocess
+from socket import gethostbyname
 
  
                      
@@ -74,20 +76,46 @@ def run_theHarvester(target):
             target.set_description(f"Runnning \033[01m\033[91m theHarvester \033[00m on \033[01m\033[91m{domain}\033[00m")
             #print(f"running a \033[01m\033[91m theHarvester \033[00m scan on the {domain} domain using {arguments.source} as a source\n")
 
-        os.system(f"theHarvester -d {domain} -b {arguments.source} > results/{domain}/{today}-theHarvester")
+        result = subprocess.run(["theHarvester","-d", domain, "-b" ,arguments.source],capture_output=True, encoding = "UTF-8")
+        with open(f"results/{domain}/{today}-theHarvester","w") as file:
+            file.write(result.stdout)
         if arguments.verbose:
             target.update()
 
 #Function to run shodan over the domain list
-def run_shodan(target):
+def run_shodan(target,api_key):
+
+    subprocess.run(["shodan", "init" ,api_key], capture_output=True, encoding = "UTF-8")
+
     if arguments.verbose:
         target = tqdm(target)
+    
     for domain in target:
+
         if arguments.verbose:
             target.set_description(f"Runnning \033[01m\033[91m Shodan \033[00m on \033[01m\033[91m{domain}\033[00m")
-        #print(f"\033[01m\033[91mshodan\033[00m is running on domain {domain}\n")
-    if arguments.verbose:
-        target.update()    
+
+        try:
+            
+            result = subprocess.run(["shodan" ,"domain", domain], capture_output=True, encoding = "UTF-8")
+            result.check_returncode()
+            
+            with open (f"results/{domain}/{today}-shodan", "w") as file:
+                file.write(result.stdout)
+
+            
+        except:
+            
+            print("No query credit for a domain scan, running free host scan by IP")
+
+            target_ip = gethostbyname(domain)
+            result = subprocess.run(["shodan", "host" , target_ip], capture_output=True, encoding = "UTF-8")
+            
+            with open (f"results/{domain}/{today}-shodan", "w") as file:
+                file.write(result.stdout)
+                
+        if arguments.verbose:
+            target.update()
         
     
 
@@ -97,9 +125,11 @@ def run_dnscan(target):
         target = tqdm(target)
     for domain in target:
         if arguments.verbose:
-            target.set_description(f"Runnning \033[01m\033[91m Shodan \033[00m on \033[01m\033[91m{domain}\033[00m")
+            target.set_description(f"Runnning \033[01m\033[91m Dnscan \033[00m on \033[01m\033[91m{domain}\033[00m")
             #print(f"running a \033[01m\033[91mdnscan\033[00m scan on the {domain} domain\n")
-        os.system(f"./dnscan/dnscan.py -d {domain} > results/{domain}/{today}-dnscan")
+        result = subprocess.run(["./dnscan/dnscan.py", "-d", domain],capture_output=True, encoding = "UTF-8")
+        with open (f"results/{domain}/{today}-dnscan", "w") as file:
+            file.write(result.stdout)
     if arguments.verbose:
         target.update()
 
@@ -133,7 +163,7 @@ def fetch_urlscan_result(domain_list, uuid_list):
     for domain in domain_list:
         uuid_count = 0
         if arguments.verbose:
-            domain_list.set_description(f"getting the \033[01m\033[91murlscan.io\033[00m scan results for the {domain} domain")
+            domain_list.set_description(f"Getting the \033[01m\033[91murlscan.io\033[00m scan results for the {domain} domain")
             #print(f"getting the \033[01m\033[91murlscan.io\033[00m scan results for the {domain} domain\n")
         query = (requests.get(f"https://urlscan.io/api/v1/result/{uuid_list[uuid_count]}"))
         formatted_query = json2html.convert(json = query.text)
@@ -158,7 +188,7 @@ def run_dorkscan(target,dorks):
         
         for dork in dorks:
             query = f"inurl:{domain} {dork}"
-            result_list.append(f"-inurl:{query} :\n")
+            result_list.append(f"{query} :\n")
             client = yagooglesearch.SearchClient(query,verbosity = 0, max_search_result_urls_to_return=10, yagooglesearch_manages_http_429s=False)
             client.assign_random_user_agent()
             urls = client.search()
@@ -212,7 +242,7 @@ else:
 print("\n")
 
 if configuration['shodan']['enabled']:
-    run_shodan(target_list)
+    run_shodan(target_list,configuration['shodan']['api_key'])
 else:
 	print("shodan is disabled in config file\n")
 
