@@ -10,7 +10,7 @@ RUN pip install -r requirements.txt
 RUN chmod +x T.O.C.py
 
 COPY ./*.txt /T.O.C/
-COPY ./*.yaml /TOC/
+COPY ./*.yaml /T.O.C/
 
 
 ENTRYPOINT ["./T.O.C.py"]
