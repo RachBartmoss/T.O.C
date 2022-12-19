@@ -9,7 +9,8 @@ RUN git clone https://github.com/rbsec/dnscan.git
 RUN pip install -r requirements.txt
 RUN chmod +x T.O.C.py
 
-COPY ./ressources/*.txt /T.O.C
+COPY ./*.txt /T.O.C/
+COPY ./*.yaml /TOC/
 
 
 ENTRYPOINT ["./T.O.C.py"]
