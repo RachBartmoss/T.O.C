@@ -1,5 +1,7 @@
-![logo](https://github.com/RachBartmoss/T.O.C/blob/main/T.O.C_logo.png)                                         
-                     
+                                   
+<p align="center">
+  <img src="https://github.com/RachBartmoss/T.O.C/blob/main/T.O.C_logo.png"/>
+</p>
 
 ## What is this?
 
