@@ -6,3 +6,4 @@ shodan
 json2html
 pyYAML
 tqdm
+yagooglesearch
