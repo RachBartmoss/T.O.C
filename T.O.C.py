@@ -267,4 +267,4 @@ if configuration['dorkscan']['enabled']:
     dorks_list = get_dorkslist(arguments.dorks)
     run_dorkscan(target_list, dorks_list)
 else:
-	print("dor is disabled in config file\n")
+	print("dork is disabled in config file\n")
