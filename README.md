@@ -41,8 +41,8 @@ The case of urlscan.io is a little bit different, it makes a request on the urls
 T.O.C accepts a range of arguments like a --verbose option to display what happens in beautiful progress bars:
 
 ```
-./osint.py -h
-usage: osint.py [-h] [-v] -f FILE [-s SOURCE]
+./T.O.C.py -h
+usage: T.O.C.py [-h] [-v] -f FILE [-s SOURCE] [-d DORKS]
 
 options:
   -h, --help            show this help message and exit
@@ -50,6 +50,8 @@ options:
   -f FILE, --file FILE  list of domain name to search
   -s SOURCE, --source SOURCE
                         search source for theHarvester
+  -d DORKS, --dorks DORKS
+                        list of dorks to use for the dorkscan tool
 ```                        
                         
                                                                                                                                                                       
