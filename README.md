@@ -53,5 +53,8 @@ options:
   -d DORKS, --dorks DORKS
                         list of dorks to use for the dorkscan tool
 ```                        
-                        
-                                                                                                                                                                      
+
+#### Configuration
+
+T.O.C basic settings are found in the config.yam, each tool can be enabled if the `enabled` entry is set to `True` and disabled if set to `False`.
+It is also there that you will need to fill in your urlscan and shodan api key in the `api_key` entry
