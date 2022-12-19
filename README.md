@@ -34,6 +34,13 @@ The case of urlscan.io is a little bit different, it makes a request on the urls
 |`probe_urlscan`|Sends a request to urlscan.io to scan each of the domain, recuperating a list of request IDs (called uuid)|
 |`fetch_urlscan_result`|Fetches the result from urlscan.io using the request ID (uuid) we get from the first function|
 
+#### Output
+
+T.O.C outputs all the scan result in the ./results/<domain_name> folder. Each tool gets its own output files. All of the output files are .txt
+except for Urlscan which outputs a formatted .html file.
+
+
+
 
 #### Arguments
 
@@ -57,3 +64,6 @@ options:
 
 T.O.C basic settings are found in the config.yam, each tool can be enabled if the `enabled` entry is set to `True` and disabled if set to `False`.
 It is also there that you will need to fill in your urlscan and shodan api key in the `api_key` entry
+
+
+## Examples:
