@@ -41,6 +41,27 @@ except for Urlscan which outputs a formatted .html file.
 
 
 
+```
+.
+└── results
+    ├── aidedd.org
+    │   ├── 2022-12-18-dnscan.txt
+    │   └── 2022-12-18-shodan.txt
+    ├── esgi.fr
+    │   ├── 2022-12-18-dnscan.txt
+    │   └── 2022-12-18-shodan.txt
+    ├── pathfinderwiki.com
+    │   ├── 2022-12-18-dnscan.txt
+    │   └── 2022-12-18-shodan.txt
+    ├── tentacules.net
+    │   ├── 2022-12-18-dnscan.txt
+    │   └── 2022-12-18-shodan.txt
+    └── wikipedia.org
+        ├── 2022-12-18-dnscan.txt
+        └── 2022-12-18-shodan.txt
+```
+
+
 
 #### Arguments:
 
