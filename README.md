@@ -95,7 +95,7 @@ Lastly you can use the -v argument to make the script's output verbose
 
 ## Using T.O.C in a docker container:
 
-#### Building the container
+#### Building the container:
 
 To use T.O.C in a docker container, the first step is getting the Dockerfile. The easiest way to do this is to clone the repository and move inside the
 folder it created
@@ -115,7 +115,7 @@ present alongside the Dockerfile to be used during runtime.
 `$docker build . -t toc`
 
 
-#### Running the container
+#### Running the container:
 
 
 Once the image is built, you can start running the container. The container is actually run exactly like the script, with the same argument
