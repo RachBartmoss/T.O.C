@@ -1,10 +1,10 @@
 ![logo](https://github.com/RachBartmoss/T.O.C/blob/main/T.O.C_logo.png)    
 
-## What is this?
+## What is this?:
 
 T.O.C (Trouver Objet Caché) is an automated tool for open source investigation. It uses 5 other tools/sources and fuses them in one command-line script. It runs the 5 tools consecutively on a list of domain and outputs the result to a separate file for each domain and tool.
 
-## What does it do and how does it do it ?
+## What does it do and how does it do it ?:
 
 T.O.C takes a texte file as input and iniate 5 scans from 5 different tools on each of the domain listed.
 
@@ -34,7 +34,7 @@ The case of urlscan.io is a little bit different, it makes a request on the urls
 |`probe_urlscan`|Sends a request to urlscan.io to scan each of the domain, recuperating a list of request IDs (called uuid)|
 |`fetch_urlscan_result`|Fetches the result from urlscan.io using the request ID (uuid) we get from the first function|
 
-#### Output
+#### Output:
 
 T.O.C outputs all the scan result in the ./results/<domain_name> folder. Each tool gets its own output files. All of the output files are .txt
 except for Urlscan which outputs a formatted .html file.
@@ -42,28 +42,55 @@ except for Urlscan which outputs a formatted .html file.
 
 
 
-#### Arguments
+#### Arguments:
 
-T.O.C accepts a range of arguments like a --verbose option to display what happens in beautiful progress bars:
+T.O.C accepts a range of arguments like a --verbose option to display what happens with progress bars:
 
-```
-./T.O.C.py -h
-usage: T.O.C.py [-h] [-v] -f FILE [-s SOURCE] [-d DORKS]
+  ```
+  ./T.O.C.py -h
+  usage: T.O.C.py [-h] [-v] -f FILE [-s SOURCE] [-d DORKS]
 
-options:
-  -h, --help            show this help message and exit
-  -v, --verbose         increase output verbosity
-  -f FILE, --file FILE  list of domain name to search
-  -s SOURCE, --source SOURCE
-                        search source for theHarvester
-  -d DORKS, --dorks DORKS
-                        list of dorks to use for the dorkscan tool
-```                        
+  options:
+    -h, --help            show this help message and exit
+    -v, --verbose         increase output verbosity
+    -f FILE, --file FILE  list of domain name to search
+    -s SOURCE, --source SOURCE
+                          search source for theHarvester
+    -d DORKS, --dorks DORKS
+                          list of dorks to use for the dorkscan tool
+  ```                        
 
-#### Configuration
+#### Configuration:
 
 T.O.C basic settings are found in the config.yam, each tool can be enabled if the `enabled` entry is set to `True` and disabled if set to `False`.
 It is also there that you will need to fill in your urlscan and shodan api key in the `api_key` entry
 
 
-## Examples:
+## Examples of usage:
+
+#### Lauching the different base tools:
+
+The first way to use T.O.C is with the -h argument to display the help menu
+
+  `$./T.O.C.py -h`
+
+Other than that, the minimum number of arguments needed to run the script depends on the tools that are enabled.
+
+In any case, the -f (--file) option  is mandatory:
+
+  `$./T.O.C.py -f domain_sample.txt`
+
+If the theHarvester tool is enabled, you will need to specify the source used by theHarvester for its research with the -s (--source) argument.
+A list of source for theHarvester is displayed when you use the `theHarvester -h` command
+
+  `$./T.O.C.py -f domain_sample.txt -s hackertarget`
+
+Furthermore if the dorksan tool is enabled, you will need to specify a file with a list of google dorks with the -d (--dorks) argument
+
+  `$./T.O.C.py -f domain_sample.txt -d dork_sample.txt`
+
+Lastly you can use the -v argument to make the script's output verbose
+
+  `$./T.O.C.py -f domain_sample.txt -s hackertarget -d dork_sample.txt -v`
+
+## Using T.O.C in a docker container:
