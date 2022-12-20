@@ -94,3 +94,37 @@ Lastly you can use the -v argument to make the script's output verbose
   `$./T.O.C.py -f domain_sample.txt -s hackertarget -d dork_sample.txt -v`
 
 ## Using T.O.C in a docker container:
+
+To use T.O.C in a docker container, the first step is getting the Dockerfile. The easiest way to do this is to clone the repository and move inside the
+folder it created
+
+```
+$git clone https://github.com/RachBartmoss/T.O.C.git
+[...]
+$cd T.O.C
+```
+
+Then you need to use the `docker build` command to build the image. During the building process, the container copies every .txt and .yaml file 
+present alongside the Dockerfile to be used during runtime.
+
+`$docker build . -t toc`
+
+Once the image is built, you can start running the container. The container is actually run exactly like the script, with the same argument
+
+`$docker run toc -f domain_sample.txt -s hackertarget -v`
+
+The last step is getting the output out of the container and on your host system, to do this, you first need to use the `docker ps`command to get the 
+container's ID
+
+```
+docker ps -a
+
+CONTAINER ID   IMAGE     COMMAND                  CREATED              STATUS                          PORTS     NAMES
+7cd59c63867d   toc       "./T.O.C.py -f domai…"   About a minute ago   Exited (0) 53 seconds ago                 jolly_brattain
+```
+
+With the ID known, you can use the `docker cp` command to copy the container's result folder to your system
+
+`docker cp 7cd59c63867d:/T.O.C/results Z:\my_folder\`
+
+After this you will be able to retrieve your result file with your scan results
