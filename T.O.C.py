@@ -59,7 +59,7 @@ def get_targetlist(target_file):
 	
     return target_list
 
-#opening anothe .txt file containing a list of dorks to be used in dorkscan, converting them into a python list
+#opening another .txt file containing a list of dorks to be used in dorkscan, converting them into a python list
 def get_dorkslist(dorks_file):
 	
     dorks_list = []
@@ -92,7 +92,7 @@ def run_theHarvester(target):
 
         result = subprocess.run(["theHarvester","-d", domain, "-b" ,arguments.source],capture_output=True, encoding = "UTF-8")
 	
-        with open(f"results/{domain}/{today}-theHarvester","w") as file:
+        with open(f"results/{domain}/{today}-theHarvester.txt","w") as file:
             file.write(result.stdout)
 	
         if arguments.verbose:
@@ -119,7 +119,7 @@ def run_shodan(target,api_key):
             result = subprocess.run(["shodan" ,"domain", domain], capture_output=True, encoding = "UTF-8")
             result.check_returncode()
             
-            with open (f"results/{domain}/{today}-shodan", "w") as file:
+            with open (f"results/{domain}/{today}-shodan.txt", "w") as file:
                 file.write(result.stdout)
 
             
@@ -130,7 +130,7 @@ def run_shodan(target,api_key):
             target_ip = gethostbyname(domain)
             result = subprocess.run(["shodan", "host" , target_ip], capture_output=True, encoding = "UTF-8")
             
-            with open (f"results/{domain}/{today}-shodan", "w") as file:
+            with open (f"results/{domain}/{today}-shodan.txt", "w") as file:
                 file.write(result.stdout)
                 
         if arguments.verbose:
@@ -150,7 +150,7 @@ def run_dnscan(target):
             target.set_description(f"Runnning \033[01m\033[91m Dnscan \033[00m on \033[01m\033[91m{domain}\033[00m")
             
         result = subprocess.run(["./dnscan/dnscan.py", "-d", domain],capture_output=True, encoding = "UTF-8")
-        with open (f"results/{domain}/{today}-dnscan", "w") as file:
+        with open (f"results/{domain}/{today}-dnscan.txt", "w") as file:
             file.write(result.stdout)
 	
     if arguments.verbose:
